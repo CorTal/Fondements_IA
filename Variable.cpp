@@ -13,7 +13,7 @@ Variable::Variable(const Variable& _V)
 :name(_V.name)
 {}
 
-string Variable::get_name()
+string Variable::get_name() const
 {
   return name;
 }
@@ -27,3 +27,4 @@ void Variable::print(ostream& out) const
 {
   out << name;
 }
+

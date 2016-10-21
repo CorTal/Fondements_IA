@@ -14,26 +14,72 @@ int Predicat::get_arite()
   return arite;
 }
 
-vector< vector< Variable > > Predicat::get_variables()
+vector< vector< Variable* > > Predicat::get_variables()
 {
   return variables;
 }
 
-void Predicat::add_variables(vector<Variable> _var)
+void Predicat::add_variables(std::vector< Variable* >& _var)
 {
-  if (_var.size() != arite)
+  if (arite == _var.size())
+    variables.push_back(_var);
+  else
     cout << "Mauvais nombre de variable" << endl;
-  variables.push_back(_var);
 }
 
-void Predicat::add_var(std::vector< unsigned int > _num_var)
+void Predicat::add_var(vector< unsigned int > _num_var)
 {
-  if (_num_var.size()==(name.size()+1))
+  if (_num_var.size()==arite)
     num_var=_num_var;
   else
     cout << "Mauvais nombre de variable" << endl;
 }
 
+bool Predicat::verify(vector< Variable* > _variables)
+{
+  cout << endl;
+  cout << "in verify" << endl;
+  for (unsigned int i=0; i<_variables.size(); ++i)
+  {
+    if (_variables[i] == nullptr)
+      cout << "nullptr" << endl;
+    else
+      cout << *_variables[i] << endl;
+  }
+  for (unsigned int i=0; i<variables.size(); ++i)
+  {
+    if (variables[i].size() == _variables.size())
+    {
+      bool id = true;
+      for (unsigned int j = 0; j<_variables.size(); ++j)
+      {
+	if (variables[i][j] != _variables[j])
+	  if (_variables[j] != nullptr)
+	    id = false;
+	if (id == true)
+	{
+	  cout << "verify true" << endl;
+	  return true;
+	}
+      }
+    }
+  }
+  cout << "verify false" << endl;
+  return false;
+}
+
+void Predicat::print_var(int n)
+{
+  int j=0;
+  for (unsigned int i=0; i<name.size(); ++i)
+  {
+    cout << (*variables[n][j]) << " " << name[i] << " ";
+    ++j;
+  }
+  if (j<arite)
+    cout << (*variables[n][j]);
+  cout << endl;
+}
 
 void Predicat::print(std::ostream& out)
 {
@@ -61,3 +107,15 @@ void Predicat::print(std::ostream& out)
       out << var[j];
   }
 }
+
+void Predicat::p_var()
+{
+  for (unsigned int i = 0; i<variables.size(); ++i)
+  {
+    cout << "vector n°" << i << endl;
+    for (unsigned int j=0; j<variables[i].size(); ++j)
+      cout << *variables[i][j] << " ";
+    cout << endl;
+  }
+}
+

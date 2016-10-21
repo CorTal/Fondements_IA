@@ -2,6 +2,7 @@
 #define REGLE_H
 
 #include "Predicat.h"
+#include <map>
 
 class Regle{
 private:
@@ -12,6 +13,11 @@ private:
   Regle();
   Regle(std::vector<Predicat*> _conditions, std::vector< std::vector<unsigned int>> _var_cond, std::vector< std::vector<unsigned int>> _var_concl, std::vector<Predicat*> _conclusions);
 public:
+  std::vector<Predicat*> get_conditions();
+  std::vector< std::vector<unsigned int> > get_var_cond();
+  std::vector< std::vector<unsigned int> > get_var_concl();
+  void verifyCA(std::map< unsigned int, Variable* > m, unsigned int n, Predicat* p, std::vector< Predicat* >& preds);
+  bool exist_concl(Predicat* p);
   void print(std::ostream& out);
   friend std::ostream& operator<<(std::ostream& _out, Regle& _r){
     _r.print(_out);

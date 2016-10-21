@@ -11,16 +11,21 @@ private:
   const std::vector<std::string> var = {"X","Y","Z","T","K","M","N","P","R","W","C","B","V","A","E","U","I","O","Q","S","D","F","G","H","J","L"};
   
   int arite;
-  std::vector< std::vector<Variable> > variables;
+  std::vector< std::vector<Variable*> > variables;
+  std::vector< std::vector<Variable*> > conclusions;
   std::vector<std::string> name;
   std::vector<unsigned int> num_var;
 public:
   Predicat();
   Predicat(int _arite, std::vector<std::string> _name);
   int get_arite();
-  std::vector< std::vector<Variable> > get_variables();
-  void add_variables(std::vector<Variable> _var);
+  std::vector< std::vector<Variable*> > get_variables();
+  void add_variables(std::vector<Variable*>& _var);
   void add_var(std::vector<unsigned int> _num_var);
+  void p_var();
+  bool verify(std::vector< Variable* > _variables);
+  bool verify_n(std::vector< Variable* > _variables);
+  void print_var(int n);
   void print(std::ostream& out);
   friend std::ostream& operator<<(std::ostream& _out, Predicat& _p){
     _p.print(_out);
