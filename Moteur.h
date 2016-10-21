@@ -2,6 +2,8 @@
 #define MOTEUR_H
 #include "Regle.h"
 
+#include <algorithm>
+
 class Moteur{
 private:
   std::vector<Predicat*> preds;
@@ -10,6 +12,8 @@ private:
 public:
   Moteur();
   Moteur(std::vector<Predicat*> _preds, std::vector<Regle*> _regles, std::vector< std::pair<Predicat*,std::vector<Variable*>> > _concl);
+  void tri_nb_preds();
+  void tri_complex();
   void print_preds();
   void print_regles();
   void ChainageAvant();

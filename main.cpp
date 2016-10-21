@@ -90,7 +90,6 @@ void instanc_regle(vector<Predicat*>& preds, vector<Regle*>& regles, vector<Vari
     preds.push_back(P_cl);
     preds.push_back(P_fl);
     
-    
     Variable* p1 = new Variable("Georges");
     Variable* p2 = new Variable("Paul");
     Variable* p3 = new Variable("Anne");
@@ -215,9 +214,8 @@ int main(int argc, char **argv) {
     Moteur M(preds,regles,concl);
     
     M.print_preds();
-    M.print_regles();
-    //M.ChainageAvant();
-    cout << "true : " << true << " false : " << false << endl;
+    //M.print_regles();
+    M.ChainageAvant();
     M.ChainageArriere();
-    return 0;
+return 0;
 }

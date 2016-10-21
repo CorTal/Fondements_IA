@@ -3,7 +3,6 @@
 
 #include "Variable.h"
 #include <iostream>
-
 #include <vector>
 
 class Predicat{
@@ -12,7 +11,6 @@ private:
   
   int arite;
   std::vector< std::vector<Variable*> > variables;
-  std::vector< std::vector<Variable*> > conclusions;
   std::vector<std::string> name;
   std::vector<unsigned int> num_var;
 public:
@@ -23,8 +21,7 @@ public:
   void add_variables(std::vector<Variable*>& _var);
   void add_var(std::vector<unsigned int> _num_var);
   void p_var();
-  bool verify(std::vector< Variable* > _variables);
-  bool verify_n(std::vector< Variable* > _variables);
+  bool verify(std::vector< Variable* >& _variables);
   void print_var(int n);
   void print(std::ostream& out);
   friend std::ostream& operator<<(std::ostream& _out, Predicat& _p){

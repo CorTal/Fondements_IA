@@ -2,8 +2,29 @@
 
 using namespace std;
 
+
+bool tri_compl(Regle* R1, Regle* R2)
+{
+  return (R1->get_arite_tot() <= R2->get_arite_tot());
+}
+
+bool tri_preds(Regle*R1, Regle* R2)
+{
+  return (R1->get_conditions().size() <= R2->get_conditions().size());
+}
+
 Moteur::Moteur()
 {}
+
+void Moteur::tri_nb_preds()
+{
+  sort(regles.begin(), regles.end(), tri_preds);
+}
+
+void Moteur::tri_complex()
+{
+  sort(regles.begin(), regles.end(), tri_preds);
+}
 
 void Moteur::print_preds()
 {
@@ -33,9 +54,13 @@ void Moteur::ChainageAvant()
   vector<Predicat*> build;
   Predicat* p;
   map<unsigned int, Variable*> m;
+  vector<pair<unsigned int, Predicat*>> v;
   bool built = true;
   int j=0;
-  while(built && concl.size()>0)
+  bool ss_concl = false;
+  if (concl.size() == 0)
+    ss_concl = true;
+  while((ss_concl && built ) || (built && concl.size()>0))
   {
     built = true;
     j=0;
@@ -44,16 +69,13 @@ void Moteur::ChainageAvant()
       build.clear();
       p = regles[i]->get_conditions()[0];
       m.clear();
-      regles[i]->verifyCA(m, 0, p, build);
+      regles[i]->verifyCA(m, 0, p, build, v);
       if (build.size() == 0)
 	++j;
       else
       {
 	for (unsigned int k=(build[0]->get_variables().size()-build.size()); k<build[0]->get_variables().size(); ++k)
-	{
-	  build[0]->print_var(k);
 	  exist(build[0]);
-	}
       }
     }
     if (j == regles.size())
@@ -90,8 +112,6 @@ void Moteur::ChainageArriere()
 
 bool Moteur::CArecurs(Predicat* p, std::vector< Variable* > var)
 {
-  cout << endl << endl;
-  cout << "in CArecurs :" << *p;
   if (p->verify(var) == true)
     return true;
   vector<Regle*> reg;
@@ -125,7 +145,6 @@ bool Moteur::CArecurs(Predicat* p, std::vector< Variable* > var)
       }
       id = CArecurs(reg[i]->get_conditions()[j],var_next);
       et = et && id;
-      cout << "et : " << et << endl;
     }
     ou = ou || et;
     if (ou == true)

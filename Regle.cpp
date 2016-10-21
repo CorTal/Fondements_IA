@@ -25,50 +25,64 @@ vector< std::vector< unsigned int > > Regle::get_var_concl()
   return var_concl;
 }
 
-void Regle::verifyCA(std::map< unsigned int, Variable* > m, unsigned int n, Predicat* p, std::vector< Predicat* >& preds)
+unsigned int Regle::get_arite_tot()
+{
+  unsigned int tot=0;
+  for (unsigned int i=0; i<conditions.size(); ++i)
+    tot+=conditions[i]->get_arite();
+  return tot;
+}
+
+void Regle::verifyCA(map< unsigned int, Variable* > m, unsigned int n, Predicat* p, vector< Predicat* >& preds, vector<pair<unsigned int, Predicat*>> v)
 {
   map<unsigned int, Variable*> mprime;
+  vector<pair<unsigned int, Predicat*>> vprime;
   bool instance=true;
   for (unsigned int i=0; i<p->get_variables().size(); ++i)
   {
     mprime = m;
+    vprime = v;
     instance = true;
     for (unsigned int j=0; j<p->get_arite(); ++j)
     {
       if (mprime[var_cond[n][j]] == nullptr)
-      {
 	(mprime.at(var_cond[n][j]))=(p->get_variables()[i][j]);
-      }
       else
       {
 	if(mprime[var_cond[n][j]] != p->get_variables()[i][j])
-	{
 	  instance = false;
-	}
       }
     }
     if (instance == true)
     {
       if (n == conditions.size()-1)
       {
+	vprime.push_back(make_pair(i,p));
 	vector<Variable*> var;
 	for (unsigned int k=0; k<conclusions.size(); ++k)
 	{
 	  for (unsigned int j=0; j<var_concl[k].size(); ++j)
-	  {
 	    var.push_back(mprime[var_concl[k][j]]);
-	  }
 	  if (!(conclusions[k]->verify(var)))
 	  {
-	    //cout << "ajouté" << endl;
 	    conclusions[k]->add_variables(var);
+	    vprime[0].second->print_var(vprime[0].first);
+	    for (unsigned int l=1; l<vprime.size(); ++l)
+	    {
+	      cout << "et : ";
+	      vprime[l].second->print_var(vprime[l].first);
+	    }
+	    cout << "alors : ";
+	    conclusions[k]->print_var(conclusions[k]->get_variables().size()-1);
+	    cout << endl;
 	    preds.push_back(conclusions[k]);
 	  }
 	}
       }
       else
       {
-	verifyCA(mprime,n+1,conditions[n+1],preds);
+	vprime.push_back(make_pair(i,p));
+	verifyCA(mprime,n+1,conditions[n+1],preds,vprime);
       }
     }
   }

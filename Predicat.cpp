@@ -35,17 +35,10 @@ void Predicat::add_var(vector< unsigned int > _num_var)
     cout << "Mauvais nombre de variable" << endl;
 }
 
-bool Predicat::verify(vector< Variable* > _variables)
+bool Predicat::verify(std::vector< Variable* >& _variables)
 {
-  cout << endl;
-  cout << "in verify" << endl;
-  for (unsigned int i=0; i<_variables.size(); ++i)
-  {
-    if (_variables[i] == nullptr)
-      cout << "nullptr" << endl;
-    else
-      cout << *_variables[i] << endl;
-  }
+  vector<Variable*> inter;
+  vector<unsigned int> interint;
   for (unsigned int i=0; i<variables.size(); ++i)
   {
     if (variables[i].size() == _variables.size())
@@ -56,15 +49,13 @@ bool Predicat::verify(vector< Variable* > _variables)
 	if (variables[i][j] != _variables[j])
 	  if (_variables[j] != nullptr)
 	    id = false;
-	if (id == true)
-	{
-	  cout << "verify true" << endl;
-	  return true;
-	}
+      }
+      if (id == true)
+      {
+	return true;
       }
     }
   }
-  cout << "verify false" << endl;
   return false;
 }
 
