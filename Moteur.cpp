@@ -102,16 +102,16 @@ bool Moteur::CArecurs(Predicat* p, std::vector< Variable* > var)
   }
   if (reg.size() == 0)
     return false; // On a déjà testé en premier si le prédicat possédait les variables var nécessaires
-  bool ou = false;
-  bool et = true;
-  bool id;
   vector<unsigned int> cond, concl;
   map<unsigned int, Variable*> concls;
+  bool ou = false;
   for (unsigned int i=0; i<reg.size(); ++i)
   {
+    bool et = true;
     concl = reg[i]->get_var_concl()[0];
     for (unsigned int j=0; j<reg[i]->get_conditions().size(); ++j)
     {
+      bool id;
       cond = reg[i]->get_var_cond()[j];
       vector<Variable*> var_next;
       for (unsigned int k=0; k<concl.size(); ++k)
@@ -125,11 +125,13 @@ bool Moteur::CArecurs(Predicat* p, std::vector< Variable* > var)
       }
       id = CArecurs(reg[i]->get_conditions()[j],var_next);
       et = et && id;
-      cout << "et : " << et << endl;ll
+      cout << "et : " << et << endl;
     }
     ou = ou || et;
     if (ou == true)
+    {
       return true;
+    }
   }
   return ou;
 }
