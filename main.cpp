@@ -53,7 +53,7 @@ void instanc_regle(vector<Predicat*>& preds, vector<Regle*>& regles, vector<Vari
     Predicat* P_da = new Predicat(1,str);
     str = {"est témoin de l'alibi de"};
     Predicat* P_ta = new Predicat(2,str);
-    str = {"ne peux pas être le coupable de l'affaire"};
+    str = {"ne peut pas être le coupable de l'affaire"};
     Predicat* P_nc = new Predicat(1,str);
     str = {"a laissé des cheveux sur le lieu"};
     Predicat* P_cl = new Predicat(2,str);
