@@ -1,6 +1,6 @@
 #include "variableQt.h"
 
-std::unordered_set<std::string> variableQt::sumvars;
+std::vector<std::string> variableQt::sumvars;
 std::vector<Variable*> variableQt::allvars;
 
 variableQt::variableQt(std::vector<Variable*>* mvars, QString predicat) : vars(mvars)
@@ -43,16 +43,13 @@ void variableQt::ok()
 {
   
   if(line_var->text() != ""){
-    std::pair<std::unordered_set<std::string>::iterator,bool> p;
-    p = variableQt::sumvars.insert(line_var->text().toStdString());
-    if(p.second){
-    Variable* v = new Variable(line_var->text().toStdString());
-    
-    vars->at(numVars) = v;
-    variableQt::allvars.push_back(v);
-    numVars++;
+    if(std::find(variableQt::sumvars.begin(), variableQt::sumvars.end(),line_var->text().toStdString()) == variableQt::sumvars.end()){
+      variableQt::sumvars.push_back(line_var->text().toStdString());
+      Variable* v = new Variable(line_var->text().toStdString());
+      vars->at(numVars) = v;
+      numVars++;
    }else{
-     vars->at(numVars) = variableQt::allvars.at(std::distance(variableQt::sumvars.begin(),p.first));
+     vars->at(numVars) = variableQt::allvars.at(list_var->currentRow());
      numVars++;
    }
    if(numVars >= vars->size()){
