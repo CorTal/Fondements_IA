@@ -83,11 +83,64 @@ void Moteur::ChainageAvant()
   }
 }
 
-string Moteur::ChainageAvantS()
+void Moteur::ChainageArriere()
 {
-
+  for (unsigned int i=0; i<concl.size(); ++i)
+  {
+    vector<Regle*> reg;
+    for (unsigned int j=0; j<regles.size(); ++j)
+    {
+      if (regles[j]->exist_concl(concl[i].first) == true)
+      {
+	reg.push_back(regles[j]);
+      }
+    }
+    for (unsigned int j=0; j<reg.size(); ++j)
+    {
+      vector<pair<unsigned int, Variable*>> var;
+      vector<unsigned int> var_concl = reg[j]->get_var_concl()[0];
+      for (unsigned int k=0; k<var_concl.size(); ++k)
+	var.push_back(make_pair(var_concl[k], concl[i].second[k]));
+      CAregle(reg[j],var);
+    }
+    if (!existCA(concl[i].first))
+    {
+      cout << "la conclusion numéro : " << i << " basé sur le prédicat : " << endl << *concl[i].first << endl << "n'a pas été créée, conditions initiales insuffisante." << endl;
+    }
+  }
 }
 
+void Moteur::CAregle(Regle* r, vector< pair< unsigned int, Variable* > > var)
+{
+  vector<unsigned int> var_cond;
+  vector<pair<unsigned int, Variable*>> var_next;
+  for(unsigned int i=0; i<r->get_conditions().size(); ++i)
+  {
+    var_cond = r->get_var_cond()[i];
+    commun(var_cond, var);
+    CApred(r->get_conditions()[i],var);
+  }
+  map<unsigned int, Variable*> m;
+  for (unsigned int i=0; i<var.size(); ++i)
+    m[var[i].first] = var[i].second;
+  Predicat* p = r->get_conditions()[0];
+  vector<Predicat*> preds;
+  vector<pair<unsigned int, Predicat*>> v;
+  r->verifyCA(m,0,p,preds,v);
+}
+
+void Moteur::CApred(Predicat* p, vector< std::pair< unsigned int, Variable* > > var)
+{
+  vector<Regle*> reg;
+  for (unsigned int i=0; i<regles.size(); ++i)
+    if (regles[i]->exist_concl(p) == true)
+      reg.push_back(regles[i]);
+  if (reg.size() > 0)
+  {
+    for (unsigned int i=0; i<reg.size(); ++i)
+      CAregle(reg[i],var);
+  }
+}
 
 void Moteur::exist(Predicat* p)
 {
@@ -101,66 +154,18 @@ void Moteur::exist(Predicat* p)
   }
 }
 
-void Moteur::ChainageArriere()
+bool Moteur::existCA(Predicat* p)
 {
-  bool et = true;
-  bool id;
-  for (unsigned int i = 0; i<concl.size(); ++i)
+  for (unsigned int i=0; i<concl.size(); ++i)
   {
-    id = CArecurs(concl[i].first ,concl[i].second);
-    et = et && id;
-  }
-  if (et == true)
-    cout << "Chaînage Arrière réussi" << endl;
-  else
-    cout << "Chaînage Arrière raté" << endl;
-}
-
-bool Moteur::CArecurs(Predicat* p, std::vector< Variable* > var)
-{
-  if (p->verify(var) == true)
-    return true;
-  vector<Regle*> reg;
-  for (unsigned int i=0; i<regles.size(); ++i)
-  {
-    if (regles[i]->exist_concl(p) == true)
-      reg.push_back(regles[i]);
-  }
-  if (reg.size() == 0)
-    return false; // On a déjà testé en premier si le prédicat possédait les variables var nécessaires
-  vector<unsigned int> cond, concl;
-  map<unsigned int, Variable*> concls;
-  bool ou = false;
-  for (unsigned int i=0; i<reg.size(); ++i)
-  {
-    bool et = true;
-    concl = reg[i]->get_var_concl()[0];
-    for (unsigned int j=0; j<reg[i]->get_conditions().size(); ++j)
+    if (concl[i].first == p)
     {
-      bool id;
-      cond = reg[i]->get_var_cond()[j];
-      vector<Variable*> var_next;
-      for (unsigned int k=0; k<concl.size(); ++k)
-	concls[concl[k]]=var[k];
-      for (unsigned int k=0; k<cond.size(); ++k)
-      {
-	if (concls[cond[k]] == nullptr)
-	  var_next.push_back(nullptr);
-	else
-	  var_next.push_back(concls[cond[k]]);
-      }
-      id = CArecurs(reg[i]->get_conditions()[j],var_next);
-      et = et && id;
-    }
-    ou = ou || et;
-    if (ou == true)
-    {
-      return true;
+      if (p->verify(concl[i].second))
+	return true;
     }
   }
-  return ou;
+  return false;
 }
-
 
 bool present(pair< Predicat*, vector< Variable* > > p, vector< pair< Predicat*, vector< Variable* > > > v)
 {
@@ -182,6 +187,21 @@ bool present(pair< Predicat*, vector< Variable* > > p, vector< pair< Predicat*, 
   return false;
 }
 
+void commun(std::vector< unsigned int > var_cond, vector< std::pair< unsigned int, Variable* > >& var)
+{
+  bool present = false;
+  for (unsigned int i=0; i<var.size(); ++i)
+  {
+    present = false;
+    for (unsigned int j=0; j<var_cond.size(); ++j)
+    {
+      if (var_cond[j] == var[i].first)
+	present = true;
+      if (present = false)
+	var.erase(var.begin()+i);
+    }
+  }
+}
 
 
 string Moteur::print_predsS()
