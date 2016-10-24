@@ -9,15 +9,6 @@ Predicat::Predicat(int _arite, vector< string > _name)
 :arite(_arite), name(_name)
 {}
 
-Predicat::Predicat(int _arite, vector< string > _name, Predicat* _contr)
-:arite(_arite), name(_name), contr(_contr)
-{}
-
-void Predicat::set_contr(Predicat* _contr)
-{
-  contr = _contr;
-}
-
 int Predicat::get_arite()
 {
   return arite;
@@ -28,30 +19,23 @@ vector< vector< Variable* > > Predicat::get_variables()
   return variables;
 }
 
-void Predicat::add_variables(std::vector< Variable* >& _var)
+const vector< string >& Predicat::get_var() const
 {
-  if (contr != nullptr)
-  {
-    if (contr->verify(_var))
-    {
-      cout << "contradiction trouvé : " << endl << "La variable : " << *_var[0] << endl << "est déjà vrai pour le prédicat : " << *contr  << endl << "et on essaie de le validé au prédicat contradictoire : " << name[0] << endl <<endl;;
-    }
-  }
-  if (arite == _var.size())
-    variables.push_back(_var);
-  else
-    cout << "Mauvais nombre de variable" << endl;
+  return var;
 }
 
-void Predicat::add_var(vector< unsigned int > _num_var)
+const std::vector< unsigned int >& Predicat::get_numvar() const
 {
-  if (_num_var.size()==arite)
-    num_var=_num_var;
-  else
-    cout << "Mauvais nombre de variable" << endl;
+  return num_var;
 }
 
-bool Predicat::verify(std::vector< Variable* >& _variables)
+unsigned int Predicat::get_numvariables() const
+{
+  return variables.size();
+}
+
+
+bool Predicat::verify(vector< Variable* >& _variables)
 {
   vector<Variable*> inter;
   vector<unsigned int> interint;
@@ -75,6 +59,17 @@ bool Predicat::verify(std::vector< Variable* >& _variables)
   return false;
 }
 
+void Predicat::p_var()
+{
+  for (unsigned int i = 0; i<variables.size(); ++i)
+  {
+    cout << "vector n°" << i << endl;
+    for (unsigned int j=0; j<variables[i].size(); ++j)
+      cout << *variables[i][j] << " ";
+    cout << endl;
+  }
+}
+
 void Predicat::print_var(int n)
 {
   int j=0;
@@ -87,6 +82,39 @@ void Predicat::print_var(int n)
     cout << (*variables[n][j]);
   cout << endl;
 }
+
+string Predicat::print_varS(int n)
+{
+  ostringstream oss;
+  int j=0;
+  for (unsigned int i=0; i<name.size(); ++i)
+  {
+    oss << (*variables[n][j]) << " " << name[i] << " ";
+    ++j;
+  }
+  if (j<arite)
+    oss << (*variables[n][j]);
+  oss << endl;
+  oss.str();
+}
+
+
+void Predicat::add_variables(vector<Variable*>& _var)
+{
+ if (arite == _var.size())
+    variables.push_back(_var);
+  else
+    cout << "Mauvais nombre de variable" << endl;
+}
+
+void Predicat::add_var(std::vector< unsigned int > _num_var)
+{
+ if (_num_var.size()==arite)
+    num_var=_num_var;
+  else
+    cout << "Mauvais nombre de variable" << endl;
+}
+
 
 void Predicat::print(std::ostream& out)
 {
@@ -115,14 +143,87 @@ void Predicat::print(std::ostream& out)
   }
 }
 
-void Predicat::p_var()
+void Predicat::printVariables()
 {
-  for (unsigned int i = 0; i<variables.size(); ++i)
+     int j=0;
+  string esp = " ";
+  if(!variables.empty())
   {
-    cout << "vector n°" << i << endl;
-    for (unsigned int j=0; j<variables[i].size(); ++j)
-      cout << *variables[i][j] << " ";
-    cout << endl;
+    for(unsigned int i = 0; i < variables.size(); ++i){
+      for(unsigned int j = 0; j < name.size(); ++j){
+	cout << variables[i].at(j) << esp << name[j] <<esp;
+      }
+    }
+    if (j<arite)
+      cout << variables[variables.size()-1].at(j);
+    num_var.clear();
   }
 }
+
+string Predicat::print()
+{
+  std::stringstream ss;
+ int j=0;
+  string esp = " ";
+  string ret = "";
+  if(!num_var.empty())
+  {
+    for (unsigned int i=0; i<name.size(); ++i)
+    {
+      ret += var[num_var[j]] + esp + name[i] + esp;
+      ++j;
+    }
+    if (j<arite)
+      ret += var[num_var[j]];
+    num_var.clear();
+  }
+  else
+  {
+    for (unsigned int i=0; i<name.size(); ++i)
+    {
+      ret += var[j] + esp + name[i] + esp;
+      ++j;
+    }
+    if (j<arite)
+      ret += var[j];
+  }
+
+  return ret;
+}
+
+string Predicat::printLastVar()
+{
+  unsigned int j = 0;
+  string esp = " ";
+  string ret = "";
+  if(!variables.empty())
+  {
+    for(j; j < name.size(); ++j){
+      ret += variables[variables.size()-1].at(j)->get_name() + esp + name[j] + esp;
+    }
+    if (j<arite)
+	ret += variables[variables.size()-1].at(j)->get_name();
+    num_var.clear();
+  }
+  return ret;
+}
+
+string Predicat::print_with_vars(vector< Variable* > vec)
+{
+   unsigned int j=0;
+  string esp = " ";
+  string ret = "";
+  if(!vec.empty())
+  {
+    for(j; j < name.size(); ++j){
+      ret += vec[j]->get_name() + esp + name[j] + esp;
+    }
+    if (j<arite)
+	ret += vec[j]->get_name();
+    num_var.clear();
+  }
+  return ret;
+}
+
+
 

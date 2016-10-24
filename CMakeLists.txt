@@ -1,9 +1,13 @@
 cmake_minimum_required(VERSION 2.6)
-project(systeme_expert)
+project(test)
+find_package(Qt4 REQUIRED)
 
-add_definitions(-std=c++1y -ggdb -O3)
-add_executable(systeme_expert Variable.cpp Predicat.cpp Regle.cpp main.cpp)
+include_directories(${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
-install(TARGETS systeme_expert RUNTIME DESTINATION bin)
+set(test_SRCS rulesQt.cpp Moteur.cpp variableQt.cpp solveQt.cpp ajoutQt.cpp displayQt.cpp Predicat.cpp Regle.cpp Variable.cpp main.cpp)
 
-SET(CMAKE_CXX_FLAGS "-std=c++1y")
+qt4_automoc(${test_SRCS})
+add_executable(test ${test_SRCS})
+target_link_libraries(test ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY})
+
+install(TARGETS test RUNTIME DESTINATION bin)
