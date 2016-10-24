@@ -9,7 +9,7 @@
 #include <QtGui/QApplication>
 #include<QtGui/QDesktopWidget>
 #include <QtCore/QString>
-
+#include <QtCore/QDebug>
 #include "Moteur.h"
 using namespace std;
 
@@ -30,7 +30,6 @@ private:
   vector<Regle*>* regles;
   vector< pair<Predicat*,vector<Variable*>> >* concl;
   
-  Moteur m;
 public slots:
   void chainageAvant();
   void chainageArriere();

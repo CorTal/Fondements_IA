@@ -1,6 +1,7 @@
 #include "variableQt.h"
 
 std::set<std::string> variableQt::sumvars;
+std::vector<Variable*> variableQt::allvars;
 
 variableQt::variableQt(std::vector<Variable*>* mvars, QString predicat) : vars(mvars)
 {
@@ -42,10 +43,19 @@ void variableQt::ok()
 {
   
   if(line_var->text() != ""){
-    variableQt::sumvars.insert(line_var->text().toStdString());
-    vars->at(numVars)->set_name(line_var->text().toStdString());
+    std::pair<std::set<std::string>::iterator,bool> p;
+    p = variableQt::sumvars.insert(line_var->text().toStdString());
+    if(p.second){
+    Variable* v = new Variable(line_var->text().toStdString());
+    
+    vars->at(numVars) = v;
+    variableQt::allvars.push_back(v);
     numVars++;
-    if(numVars >= vars->size()){
+   }else{
+     vars->at(numVars) = variableQt::allvars.at(std::distance(variableQt::sumvars.begin(),p.first));
+     numVars++;
+   }
+   if(numVars >= vars->size()){
       emit closed();
       this->close();
     }else{
@@ -61,8 +71,7 @@ void variableQt::ok()
 }
 
 void variableQt::ok_list(){
-  variableQt::sumvars.insert(list_var->currentItem()->text().toStdString());
-  vars->at(numVars)->set_name(list_var->currentItem()->text().toStdString());
+  vars->at(numVars) =  variableQt::allvars.at(list_var->currentRow());
   list_var->takeItem(list_var->currentRow());
   numVars++;
   if(numVars >= vars->size()){

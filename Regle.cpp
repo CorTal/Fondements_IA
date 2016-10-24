@@ -88,6 +88,63 @@ void Regle::verifyCA(map< unsigned int, Variable* > m, unsigned int n, Predicat*
   }
 }
 
+string Regle::verifyCAS(map< unsigned int, Variable* > m, unsigned int n, Predicat* p, vector< Predicat* >& preds, vector<pair<unsigned int, Predicat*>> v)
+{
+  string ret = "";
+  map<unsigned int, Variable*> mprime;
+  vector<pair<unsigned int, Predicat*>> vprime;
+  bool instance=true;
+  for (unsigned int i=0; i<p->get_variables().size(); ++i)
+  {
+    mprime = m;
+    vprime = v;
+    instance = true;
+    for (unsigned int j=0; j<p->get_arite(); ++j)
+    {
+      if (mprime[var_cond[n][j]] == nullptr)
+	(mprime.at(var_cond[n][j]))=(p->get_variables()[i][j]);
+      else
+      {
+	if(mprime[var_cond[n][j]] != p->get_variables()[i][j])
+	  instance = false;
+      }
+    }
+    if (instance == true)
+    {
+      if (n == conditions.size()-1)
+      {
+	vprime.push_back(make_pair(i,p));
+	vector<Variable*> var;
+	for (unsigned int k=0; k<conclusions.size(); ++k)
+	{
+	  for (unsigned int j=0; j<var_concl[k].size(); ++j)
+	    var.push_back(mprime[var_concl[k][j]]);
+	  if (!(conclusions[k]->verify(var)))
+	  {
+	    ret += conclusions[k]->add_variablesS(var);
+	    ret += vprime[0].second->print_varS(vprime[0].first);
+	   for (unsigned int l=1; l<vprime.size(); ++l)
+	    {
+	      ret += "et : ";
+	      ret += vprime[l].second->print_varS(vprime[l].first);
+	    }
+	    ret += "alors : ";
+	    ret += conclusions[k]->print_varS(conclusions[k]->get_variables().size()-1);
+	    ret += "\n";
+	    preds.push_back(conclusions[k]);
+	  }
+	}
+      }
+      else
+      {
+	vprime.push_back(make_pair(i,p));
+	ret += verifyCAS(mprime,n+1,conditions[n+1],preds,vprime);
+      }
+    }
+  }
+return ret;
+}
+
 bool Regle::exist_concl(Predicat* p)
 {
   for(unsigned int i=0; i<conclusions.size(); ++i)

@@ -1,7 +1,7 @@
 #include "solveQt.h"
 
 solveQt::solveQt(vector<Predicat*>* mpred,vector<Regle*>* mregles, vector< pair<Predicat*,vector<Variable*>> >* mconcl)
-: QWidget(), preds(mpred), regles(mregles),concl(mconcl), m(*preds,*regles,*concl)
+: QWidget(), preds(mpred), regles(mregles),concl(mconcl)
 
 {
   resize(QApplication::desktop()->width()/2, QApplication::desktop()->height()/2);
@@ -29,13 +29,24 @@ solveQt::~solveQt()
 
 void solveQt::chainageAvant()
 {
+  Moteur m(*preds,*regles,*concl);
   text_result->clear();
   QString text = QString::fromUtf8(m.print_predsS().c_str());
   text += QString::fromUtf8(m.print_reglesS().c_str());
+  
+  text += QString::fromUtf8(m.ChainageAvantS().c_str());
+  
   text_result->setText(text);
 }
 
 void solveQt::chainageArriere(){
+Moteur m(*preds,*regles,*concl);
+  text_result->clear();
+  QString text = QString::fromUtf8(m.print_predsS().c_str());
+  text += QString::fromUtf8(m.print_reglesS().c_str());
+  
+  text += QString::fromUtf8(m.ChainageArriereS().c_str());
+  text_result->setText(text);
 }
 
 

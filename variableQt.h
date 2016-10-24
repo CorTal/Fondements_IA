@@ -27,6 +27,7 @@ public:
   int numVars;
   std::vector<Variable*>* vars;
   static std::set<std::string> sumvars;
+  static std::vector<Variable*> allvars;
 private:
   QLabel* lab_pred;
   QLabel* lab_var;

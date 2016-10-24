@@ -81,7 +81,6 @@ void displayQt::onCloseAj()
     List_Facts->addItem(QString::fromUtf8(pred->printLastVar().c_str()));
   }else{
     List_Goals->addItem(QString::fromUtf8(pred->print_with_vars(concl->back().second).c_str()));
-    //concl->push_back(make_pair(currPred,*vars));
   }
 }
 

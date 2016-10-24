@@ -83,6 +83,42 @@ void Moteur::ChainageAvant()
   }
 }
 
+string Moteur::ChainageAvantS()
+{
+  ostringstream oss;
+  vector<Predicat*> build;
+  Predicat* p;
+  map<unsigned int, Variable*> m;
+  vector<pair<unsigned int, Predicat*>> v;
+  bool built = true;
+  int j=0;
+  bool ss_concl = false;
+  if (concl.size() == 0)
+    ss_concl = true;
+  while((ss_concl && built ) || (built && concl.size()>0))
+  {
+ built = true;
+    j=0;
+    for (unsigned int i=0; i<regles.size(); ++i)
+    {
+      build.clear();
+      p = regles[i]->get_conditions()[0];
+      m.clear();
+      oss << regles[i]->verifyCAS(m, 0, p, build, v);
+      if (build.size() == 0)
+	++j;
+      else
+      {
+	for (unsigned int k=(build[0]->get_variables().size()-build.size()); k<build[0]->get_variables().size(); ++k)
+	  exist(build[0]);
+      }
+    }
+    if (j == regles.size())
+      built = false;
+  }
+  return oss.str();;
+}
+
 void Moteur::ChainageArriere()
 {
   for (unsigned int i=0; i<concl.size(); ++i)
@@ -110,6 +146,37 @@ void Moteur::ChainageArriere()
   }
 }
 
+
+
+string Moteur::ChainageArriereS()
+{
+  ostringstream oss;
+  for (unsigned int i=0; i<concl.size(); ++i)
+  {
+    vector<Regle*> reg;
+    for (unsigned int j=0; j<regles.size(); ++j)
+    {
+      if (regles[j]->exist_concl(concl[i].first) == true)
+      {
+	reg.push_back(regles[j]);
+      }
+    }
+    for (unsigned int j=0; j<reg.size(); ++j)
+    {
+      vector<pair<unsigned int, Variable*>> var;
+      vector<unsigned int> var_concl = reg[j]->get_var_concl()[0];
+      for (unsigned int k=0; k<var_concl.size(); ++k)
+	var.push_back(make_pair(var_concl[k], concl[i].second[k]));
+      oss << CAregleS(reg[j],var);
+    }
+    if (!existCA(concl[i].first))
+    {
+      oss << "la conclusion numéro : " << i << " basé sur le prédicat : " << endl << *concl[i].first << endl << "n'a pas été créée, conditions initiales insuffisante." << endl;
+    }
+  }
+  return oss.str();
+}
+
 void Moteur::CAregle(Regle* r, vector< pair< unsigned int, Variable* > > var)
 {
   vector<unsigned int> var_cond;
@@ -128,6 +195,26 @@ void Moteur::CAregle(Regle* r, vector< pair< unsigned int, Variable* > > var)
   vector<pair<unsigned int, Predicat*>> v;
   r->verifyCA(m,0,p,preds,v);
 }
+string Moteur::CAregleS(Regle* r, vector< pair< unsigned int, Variable* > > var)
+{
+  string ret = "";
+  vector<unsigned int> var_cond;
+  vector<pair<unsigned int, Variable*>> var_next;
+  for(unsigned int i=0; i<r->get_conditions().size(); ++i)
+  {
+    var_cond = r->get_var_cond()[i];
+    commun(var_cond, var);
+    ret += CApredS(r->get_conditions()[i],var);
+  }
+  map<unsigned int, Variable*> m;
+  for (unsigned int i=0; i<var.size(); ++i)
+    m[var[i].first] = var[i].second;
+  Predicat* p = r->get_conditions()[0];
+  vector<Predicat*> preds;
+  vector<pair<unsigned int, Predicat*>> v;
+  ret += r->verifyCAS(m,0,p,preds,v);
+return ret;
+}
 
 void Moteur::CApred(Predicat* p, vector< std::pair< unsigned int, Variable* > > var)
 {
@@ -140,6 +227,21 @@ void Moteur::CApred(Predicat* p, vector< std::pair< unsigned int, Variable* > > 
     for (unsigned int i=0; i<reg.size(); ++i)
       CAregle(reg[i],var);
   }
+}
+
+string Moteur::CApredS(Predicat* p, vector< std::pair< unsigned int, Variable* > > var)
+{
+  string ret = "";
+  vector<Regle*> reg;
+  for (unsigned int i=0; i<regles.size(); ++i)
+    if (regles[i]->exist_concl(p) == true)
+      reg.push_back(regles[i]);
+  if (reg.size() > 0)
+  {
+    for (unsigned int i=0; i<reg.size(); ++i)
+      	ret += CAregleS(reg[i],var);
+  }
+  return ret;
 }
 
 void Moteur::exist(Predicat* p)
