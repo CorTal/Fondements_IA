@@ -13,9 +13,12 @@ private:
   std::vector< std::vector<Variable*> > variables;
   std::vector<std::string> name;
   std::vector<unsigned int> num_var;
+  Predicat* contr;
 public:
   Predicat();
   Predicat(int _arite, std::vector<std::string> _name);
+  Predicat(int _arite, std::vector<std::string> _name, Predicat* _contr);
+  void set_contr(Predicat* _contr);
   int get_arite();
   std::vector< std::vector<Variable*> > get_variables();
   void add_variables(std::vector<Variable*>& _var);

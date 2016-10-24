@@ -55,11 +55,14 @@ void instanc_regle(vector<Predicat*>& preds, vector<Regle*>& regles, vector<Vari
     str = {"est témoin de l'alibi de"};
     Predicat* P_ta = new Predicat(2,str);
     str = {"ne peux pas être le coupable de l'affaire"};
-    Predicat* P_nc = new Predicat(1,str);
+    Predicat* P_nc = new Predicat(1,str,P_c);
+    P_c->set_contr(P_nc);
     str = {"a laissé des cheveux sur le lieu"};
     Predicat* P_cl = new Predicat(2,str);
     str = {"a été filmé sur le lieu"};
     Predicat* P_fl = new Predicat(2,str);
+    str = {"était sur le même lieu que"};
+    Predicat* P_ml = new Predicat(2,str);
     
     
     preds.push_back(P_ea);
@@ -89,44 +92,33 @@ void instanc_regle(vector<Predicat*>& preds, vector<Regle*>& regles, vector<Vari
     preds.push_back(P_nc);
     preds.push_back(P_cl);
     preds.push_back(P_fl);
+    preds.push_back(P_ml);
     
-    Variable* p1 = new Variable("Georges");
-    Variable* p2 = new Variable("Paul");
-    Variable* p3 = new Variable("Anne");
-    Variable* p4 = new Variable("Jean");
-    Variable* o1 = new Variable("Vase");
-    Variable* l1 = new Variable("Parc");
-    
-    
-    vector<Variable*> v = {p1};
-    preds[11]->add_variables(v);
-    preds[11]->print_var(preds[11]->get_variables().size()-1);
-    v = {o1};
-    preds[12]->add_variables(v);
-    preds[12]->print_var(preds[12]->get_variables().size()-1);
-    preds[7]->add_variables(v);
-    preds[7]->print_var(preds[7]->get_variables().size()-1);
-    v = {p2, l1};
-    preds[14]->add_variables(v);
-    preds[14]->print_var(preds[14]->get_variables().size()-1);
-    v = {p2,p1,l1};
-    preds[18]->add_variables(v);
-    preds[18]->print_var(preds[18]->get_variables().size()-1);
-    v = {p4, l1};
-    preds[14]->add_variables(v);
-    preds[14]->print_var(preds[14]->get_variables().size()-1);
-    v = {p4,p3,l1};
-    preds[18]->add_variables(v);
-    preds[18]->print_var(preds[18]->get_variables().size()-1);
-    v = {l1};
-    preds[15]->add_variables(v);
-    preds[15]->print_var(preds[15]->get_variables().size()-1);
-    var.push_back(p1);
-    var.push_back(p2);
-    var.push_back(p3);
-    var.push_back(p4);
-    var.push_back(o1);
-    var.push_back(l1);
+//     Variable* p1 = new Variable("Georges");
+//     Variable* p2 = new Variable("Paul");
+//     Variable* o1 = new Variable("Couteau");
+//     Variable* l1 = new Variable("Parc");
+//     
+//     
+//     vector<Variable*> v = {p1,o1};
+//     preds[0]->add_variables(v);
+//     v = {o1};
+//     preds[2]->add_variables(v);
+//     v = {p1,p2};
+//     preds[9]->add_variables(v);
+//     v = {p2};
+//     preds[6]->add_variables(v);
+//     v = {p1,l1};
+//     preds[14]->add_variables(v);
+//     v = {l1};
+//     preds[15]->add_variables(v);
+//     v={p1};
+//     P_nc->add_variables(v);
+//     
+//     var.push_back(p1);
+//     var.push_back(p2);
+//     var.push_back(o1);
+//     var.push_back(l1);
     
     vector<Predicat*> cond;
     vector<Predicat*> concl;
@@ -163,23 +155,18 @@ void instanc_regle(vector<Predicat*>& preds, vector<Regle*>& regles, vector<Vari
     Regle* R6 = Regle::fabriqueRegle(cond, var_cond, var_concl, concl);
     cond = {P_fl};
     Regle* R7 = Regle::fabriqueRegle(cond, var_cond, var_concl, concl);
-    cond = {P_l, P_tlc};
-    concl = {P_l};
-    var_cond = {{1,2},{1,0,2}};
-    var_concl = {{0,2}};
-    Regle* R8 = Regle::fabriqueRegle(cond, var_cond, var_concl, concl);
     cond = {P_a};
     concl = {P_nc};
     var_cond = {{0}};
     var_concl = {{0}};
-    Regle* R9 = Regle::fabriqueRegle(cond, var_cond, var_concl, concl);
+    Regle* R8 = Regle::fabriqueRegle(cond, var_cond, var_concl, concl);
     cond = {P_uac,P_mt,P_v,P_plc};
     concl = {P_c};
     var_cond = {{0},{0,1},{1},{0}};
     var_concl = {{0}};
-    Regle* R10 = Regle::fabriqueRegle(cond, var_cond, var_concl, concl);
+    Regle* R9 = Regle::fabriqueRegle(cond, var_cond, var_concl, concl);
     cond = {P_uov, P_mv, P_vol, P_plc};
-    Regle* R11 = Regle::fabriqueRegle(cond, var_cond, var_concl, concl);
+    Regle* R10 = Regle::fabriqueRegle(cond, var_cond, var_concl, concl);
     
     
     regles.push_back(R0);
@@ -193,7 +180,6 @@ void instanc_regle(vector<Predicat*>& preds, vector<Regle*>& regles, vector<Vari
     regles.push_back(R8);
     regles.push_back(R9);
     regles.push_back(R10);
-    regles.push_back(R11);
 }
 
 int main(int argc, char **argv) {
@@ -205,17 +191,17 @@ int main(int argc, char **argv) {
     instanc_regle(preds, regles, var);
     vector< pair<Predicat*,vector<Variable*>> > concl;
     pair<Predicat*,vector<Variable*>> p;
-    v = {var[0]};
-    p = make_pair(preds[17],v);
-    concl.push_back(p);
-    v = {var[2]};
-    p = make_pair(preds[17],v);
-    concl.push_back(p);
+//     v = {var[0]};
+//     p = make_pair(preds[8],v);
+//     concl.push_back(p);
+//     v = {var[2]};
+//     p = make_pair(preds[17],v);
+//     concl.push_back(p);
     Moteur M(preds,regles,concl);
     
-    M.print_preds();
-    //M.print_regles();
-    M.ChainageAvant();
-    M.ChainageArriere();
+//     M.print_preds();
+//     M.print_regles();
+//     M.ChainageAvant();
+//     M.ChainageArriere();
 return 0;
 }

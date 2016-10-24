@@ -18,10 +18,13 @@ public:
   void print_regles();
   void ChainageAvant();
   void ChainageArriere();
-  bool CArecurs(Predicat* p, std::vector< Variable* > var);
+  void CAregle(Regle* r, std::vector<std::pair<unsigned int, Variable*>> var);
+  void CApred(Predicat* p, std::vector< std::pair< unsigned int, Variable* > > var);
   void exist(Predicat* p);
+  bool existCA(Predicat* p);
 };
 
 bool present(std::pair<Predicat*,std::vector<Variable*>> p, std::vector<std::pair<Predicat*,std::vector<Variable*>>> v);
+void commun(std::vector<unsigned int> var_cond, std::vector<std::pair<unsigned int, Variable*>>& var);
 
 #endif

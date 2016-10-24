@@ -9,6 +9,15 @@ Predicat::Predicat(int _arite, vector< string > _name)
 :arite(_arite), name(_name)
 {}
 
+Predicat::Predicat(int _arite, vector< string > _name, Predicat* _contr)
+:arite(_arite), name(_name), contr(_contr)
+{}
+
+void Predicat::set_contr(Predicat* _contr)
+{
+  contr = _contr;
+}
+
 int Predicat::get_arite()
 {
   return arite;
@@ -21,6 +30,13 @@ vector< vector< Variable* > > Predicat::get_variables()
 
 void Predicat::add_variables(std::vector< Variable* >& _var)
 {
+  if (contr != nullptr)
+  {
+    if (contr->verify(_var))
+    {
+      cout << "contradiction trouvé : " << endl << "La variable : " << *_var[0] << endl << "est déjà vrai pour le prédicat : " << *contr  << endl << "et on essaie de le validé au prédicat contradictoire : " << name[0] << endl <<endl;;
+    }
+  }
   if (arite == _var.size())
     variables.push_back(_var);
   else
