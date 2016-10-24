@@ -9,11 +9,9 @@
 #include <QtGui/QBoxLayout>
 #include <QtGui/QMessageBox>
 #include <QtCore/QString>
-#include<QtDebug>
 #include<QtGui/QKeyEvent>
 #include <QtGui/QApplication>
 #include<QtGui/QDesktopWidget>
-#include <unordered_set>
 
 #include "Predicat.h"
 class variableQt : public QWidget
@@ -26,7 +24,7 @@ public:
     
   int numVars;
   std::vector<Variable*>* vars;
-  static std::unordered_set<std::string> sumvars;
+  static std::vector<std::string> sumvars;
   static std::vector<Variable*> allvars;
 private:
   QLabel* lab_pred;
