@@ -21,7 +21,7 @@ variableQt::variableQt(std::vector<Variable*>* mvars, QString predicat) : vars(m
     layout->addWidget(but_ok);
     layout2 = new QVBoxLayout();
     list_var = new QListWidget();
-    for(std::set<std::string>::iterator it = variableQt::sumvars.begin(); it != variableQt::sumvars.end(); ++it){
+    for(std::vector<std::string>::iterator it = variableQt::sumvars.begin(); it != variableQt::sumvars.end(); ++it){
       list_var->addItem(QString::fromUtf8((*it).c_str()));
     }
     but_ok_list = new QPushButton("OK");
@@ -47,6 +47,7 @@ void variableQt::ok()
       variableQt::sumvars.push_back(line_var->text().toStdString());
       Variable* v = new Variable(line_var->text().toStdString());
       vars->at(numVars) = v;
+       variableQt::allvars.push_back(v);
       numVars++;
    }else{
      vars->at(numVars) = variableQt::allvars.at(list_var->currentRow());
